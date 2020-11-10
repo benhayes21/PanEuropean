@@ -1,0 +1,23 @@
+{
+    "model_settings":{
+    	"event_set":{
+    		"name": "Event Set",
+    		"desc": "Earthquake Set",
+    		"default": "p",
+    		"options":[
+			{"id":"p", "desc":"Probabilistic"}
+    		]
+    	},
+        "boolean_parameters": [
+            {"name":"peril_1", "desc":"Earthquake peril", "default":true }
+        ]
+    },
+    "lookup_settings":{
+        "supported_perils":[
+           {"id": "QEQ", "desc": "Earthquake"}
+        ]
+    },
+    "data_settings": {
+	"group_fields": ["PortNumber", "AccNumber", "LocNumber"]
+    }
+}

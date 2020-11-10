@@ -1,0 +1,10 @@
+{
+    "analysis_settings_json": "analysis_settings.json",
+    "ktools_alloc_rule_gul": 0,
+    "lookup_data_dir": "./complex_model",
+    "lookup_module_path": "complex_model",
+    "model_data_dir": "./model_data",
+    "model_version_csv": "./complex_model/ModelVersion.csv",
+    "oed_accounts_csv": "tests/Acc_PRA34_v2.csv",
+    "oed_location_csv": "tests/Loc_PRA34_v2.csv"
+}

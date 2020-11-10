@@ -1,0 +1,39 @@
+FROM coreoasis/model_worker:1.9.0
+
+#DOTNET SETUP 
+#DEPENDENCIES
+ RUN apt-get update \
+     && apt-get install -y wget \
+     && rm -rf /var/lib/apt/lists/*
+
+RUN wget -P /tmp/ https://download.visualstudio.microsoft.com/download/pr/8db2b522-7fa2-4903-97ec-d6d04d297a01/f467006b9098c2de256e40d2e2f36fea/dotnet-sdk-3.1.301-linux-x64.tar.gz
+RUN mkdir /usr/share/dotnet 
+RUN tar -zxf /tmp/dotnet-sdk-3.1.301-linux-x64.tar.gz -C /usr/share/dotnet/
+RUN echo "export PATH=$PATH:/usr/share/dotnet/" >> ~/.bashrc
+RUN echo "export DOTNET_ROOT=/usr/share/dotnet/" >> ~/.bashrc  
+RUN ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet
+RUN dotnet --info
+RUN python3 --version
+RUN pip3 install --upgrade pip==20.0.2
+RUN rm /tmp/dotnet-sdk-3.1.301-linux-x64.tar.gz
+
+#ERN FILES
+RUN wget -P /tmp/ https://serv.ern.com.mx/download/oasis/ERN_Files.tar.gz
+RUN tar -zxf /tmp/ERN_Files.tar.gz -C /usr/local/bin/
+RUN rm /tmp/ERN_Files.tar.gz
+
+COPY ./requirements.txt /tmp/ 
+COPY ./oasislmf-1.9.0-py3-none-manylinux1_x86_64.whl /tmp/ 
+RUN pip3 uninstall -y oasislmf
+RUN pip3 install -r /tmp/requirements.txt
+RUN pip3 install /tmp/oasislmf-1.9.0-py3-none-manylinux1_x86_64.whl
+RUN rm /tmp/oasislmf-1.9.0-py3-none-manylinux1_x86_64.whl
+
+#COPY ./conf.ini ./
+#COPY ./analysis_settings.json ./analysis_settings.json
+COPY ./analysis_settings.json /home/worker/complex_model/analysis_settings.json
+COPY ./complex_model /home/worker/complex_model
+COPY ./meta-data /home/worker/meta-data
+COPY ./model_data /home/worker/model_data
+COPY ./setup.py /home/worker/
+RUN pip3 install -e /home/worker/

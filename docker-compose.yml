@@ -57,7 +57,7 @@ services:
    volumes:
      - ${OASIS_MEDIA_ROOT:-/tmp/docker-shared-fs}:/shared-fs:rw
   worker:
-    image: test_ern_3
+    image: ern_worker_image
     links:
      - celery-db
      - rabbit:myrabbit

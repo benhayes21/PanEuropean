@@ -1,10 +1,6 @@
-<img src="https://www.ern.com.mx/web/images/logo.png" alt="ERN" width="75"/> <img src="https://www.redrisk.com/redeng/imgred/logoRED_crop_hires.jpg" alt="RED" width="75"/> <img src="https://oasislmf.org/packages/oasis_theme_package/themes/oasis_theme/assets/src/oasis-lmf-colour.png" alt="Oasis LMF logo" width="250"/>
+<img src="https://www.ern.com.mx/web/images/logo.png" alt="Oasis LMF logo" width="75"/> <img src="https://oasislmf.org/packages/oasis_theme_package/themes/oasis_theme/assets/src/oasis-lmf-colour.png" alt="Oasis LMF logo" width="250"/>
 
-# Pan-European Earthquake Risk Model - Oasis Implementation
-
-There is a two ways to runs Oasis Implementation:
-* via Terminal (Model Development Kit - MDK)
-* or via UI
+# ComplexModelMDK
 
 ## Run complex model example via MDK
 * Install MDK dependent packages, for ubuntu
@@ -16,7 +12,7 @@ sudo apt-get update && sudo apt-get install libspatialindex-dev unixodbc-dev bui
 * Install OasisLMF (ERN version) and other required packages:
 
   ```
-  pip3 install ./oasislmf-1.9.0-py3-none-manylinux1_x86_64.whl
+  pip3 install ./oasislmf/oasislmf-1.9.0-py3-none-manylinux1_x86_64.whl
   pip3 install -r requirements.txt
   ```
 
@@ -42,7 +38,7 @@ sudo apt update && sudo apt install git docker docker-compose
 
 2) Clone this repository
 ```
-git clone https://github.com/HectorERN/PanEuropean/
+git clone https://github.com/HectorERN/PanEuropean
 cd PanEuropean
 ```
 3) Run the deployment script
@@ -56,8 +52,3 @@ sudo ./install.sh
 * [API Admin Panel](http://localhost:8000/admin) - *localhost:8000/admin*
 
 
-### Oasis - Original Notes: 
-* Gulcalc python class [complex_model/OasisLMF_ComplexModelExample_gulcalc.py](https://github.com/OasisLMF/ComplexModelMDK/blob/master/complex_model/OasisLMF_ComplexModelExample_gulcalc.py)
-* Lookup python class [complex_model/DummyComplexModelKeysLookup.py](https://github.com/OasisLMF/ComplexModelMDK/blob/master/complex_model/DummyComplexModelKeysLookup.py)
-* Example test data [tests/data](https://github.com/OasisLMF/ComplexModelMDK/tree/master/tests/data)
-* Example model params for the UI [model_resource.json](https://github.com/OasisLMF/ComplexModelMDK/blob/master/model_resource.json)

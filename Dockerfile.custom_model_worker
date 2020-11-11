@@ -23,17 +23,17 @@ RUN tar -zxf /tmp/ERN_Files.tar.gz -C /usr/local/bin/
 RUN rm /tmp/ERN_Files.tar.gz
 
 COPY ./requirements.txt /tmp/ 
-COPY ./oasislmf-1.9.0-py3-none-manylinux1_x86_64.whl /tmp/ 
+COPY ./oasislmf/oasislmf-1.9.0-py3-none-manylinux1_x86_64.whl /tmp/ 
 RUN pip3 uninstall -y oasislmf
 RUN pip3 install -r /tmp/requirements.txt
 RUN pip3 install /tmp/oasislmf-1.9.0-py3-none-manylinux1_x86_64.whl
 RUN rm /tmp/oasislmf-1.9.0-py3-none-manylinux1_x86_64.whl
 
-#COPY ./conf.ini ./
-#COPY ./analysis_settings.json ./analysis_settings.json
-COPY ./analysis_settings.json /home/worker/complex_model/analysis_settings.json
-COPY ./complex_model /home/worker/complex_model
+COPY ./src /home/worker/src
 COPY ./meta-data /home/worker/meta-data
-COPY ./model_data /home/worker/model_data
+COPY ./oasislmf_deploy.json /home/worker/oasislmf.json
 COPY ./setup.py /home/worker/
 RUN pip3 install -e /home/worker/
+
+RUN sed -i 's/OASISLMF_CONFIG = \/var\/oasis\/oasislmf.json/OASISLMF_CONFIG = \/home\/worker\/oasislmf.json/g' conf.ini
+RUN sed -i 's/MODEL_SETTINGS_FILE = \/var\/oasis\/meta-data\/model_settings.json/MODEL_SETTINGS_FILE = \/home\/worker\/meta-data\/model_settings.json/g' conf.ini

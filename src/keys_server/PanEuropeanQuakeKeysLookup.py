@@ -13,7 +13,7 @@ from oasislmf.utils.status import (
 )
 from oasislmf.model_preparation.lookup import OasisBaseKeysLookup
 
-class DummyComplexModelKeysLookup(OasisBaseKeysLookup):
+class PanEuropeanQuakeKeysLookup(OasisBaseKeysLookup):
 
     def __init__(self, 
             keys_data_directory=None,

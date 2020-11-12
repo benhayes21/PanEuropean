@@ -1,9 +1,0 @@
-{
-    "analysis_settings_json": "/home/worker/analysis_settings.json",
-    "ktools_alloc_rule_gul": 0,
-    "ktools_legacy_gul_stream": true,
-    "lookup_data_dir": "/home/worker/complex_model",
-    "lookup_module_path": "/home/worker/complex_model",
-    "model_data_dir": "/home/worker/model_data",
-    "model_version_csv": "/home/worker/complex_model/ModelVersion.csv"
-}

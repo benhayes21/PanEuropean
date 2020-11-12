@@ -29,7 +29,7 @@ services:
      - OASIS_CELERY_DB_PORT=3306
      - STARTUP_RUN_MIGRATIONS=true
    volumes:
-     - ${OASIS_MEDIA_ROOT:-./docker-shared-fs}:/shared-fs:rw
+     - ${OASIS_MEDIA_ROOT:-/tmp/docker-shared-fs}:/shared-fs:rw
   worker-monitor:
    image: coreoasis/api_server:1.9.0
    command: [wait-for-server, 'server:8000', celery, worker, -A, src.server.oasisapi, --loglevel=INFO]
@@ -55,18 +55,15 @@ services:
      - OASIS_CELERY_DB_NAME=celery
      - OASIS_CELERY_DB_PORT=3306
    volumes:
-     - ${OASIS_MEDIA_ROOT:-./docker-shared-fs}:/shared-fs:rw
+     - ${OASIS_MEDIA_ROOT:-/tmp/docker-shared-fs}:/shared-fs:rw
   worker:
-    image: coreoasis/custom_model_worker:1.9.0
-    build:
-      context: .
-      dockerfile: Dockerfile.custom_model_worker
+    image: ern_worker_image
     links:
      - celery-db
      - rabbit:myrabbit
     environment:
-     - OASIS_MODEL_SUPPLIER_ID=OasisLMF
-     - OASIS_MODEL_ID=ComplexModelExample
+     - OASIS_MODEL_SUPPLIER_ID=ERN
+     - OASIS_MODEL_ID=PanEuropeanQuake
      - OASIS_MODEL_VERSION_ID=1
      - OASIS_RABBIT_HOST=rabbit
      - OASIS_RABBIT_PORT=5672
@@ -78,12 +75,14 @@ services:
      - OASIS_CELERY_DB_USER=celery
      - OASIS_CELERY_DB_NAME=celery
      - OASIS_CELERY_DB_PORT=3306
-     - OASIS_OASISLMF_CONFIG=/home/worker/complex_model/oasislmf.json
+     - OASIS_OASISLMF_CONFIG=/home/worker/oasislmf.json
      - OASIS_KEEP_RUN_DIR=True
      - KTOOLS_LEGACY_GUL_STREAM=True
     volumes:
-     - ./:/var/oasis/:rw
-     - ${OASIS_MEDIA_ROOT:-./docker-shared-fs}:/shared-fs:rw
+     #- ./:/var/oasis/:rw
+     - ${OASIS_MEDIA_ROOT:-/tmp/docker-shared-fs}:/shared-fs:rw
+     - ./model_data:/var/oasis/model_data:rw
+     - ./keys_data:/var/oasis/keys_data:rw
   server-db:
     image: mysql
     command:
@@ -94,7 +93,7 @@ services:
       - MYSQL_PASSWORD=oasis
       - MYSQL_DATABASE=oasis
     volumes:
-      - ${OASIS_DOCKER_DB_DATA_DIR:-./db-data}/server:/var/lib/mysql/:rw
+      - ${OASIS_DOCKER_DB_DATA_DIR:-/tmp/db-data}/server:/var/lib/mysql/:rw
   celery-db:
     image: mysql
     command:
@@ -105,7 +104,7 @@ services:
       - MYSQL_PASSWORD=password
       - MYSQL_DATABASE=celery
     volumes:
-      - ${OASIS_DOCKER_DB_DATA_DIR:-./db-data}/celery:/var/lib/mysql/:rw
+      - ${OASIS_DOCKER_DB_DATA_DIR:-/tmp/db-data}/celery:/var/lib/mysql/:rw
   rabbit:
     image: rabbitmq:3-management
     environment:

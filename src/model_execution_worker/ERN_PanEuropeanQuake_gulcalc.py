@@ -690,59 +690,61 @@ def main():
             
     subprocess.check_call(cmd, shell=True, cwd=rootPath)
     
-    with open(itemsTemp, "rb") as itemsOut:
-        gul_streamtype=struct.unpack('i',itemsOut.read(4))
-        sampleSize=struct.unpack('i',itemsOut.read(4))        
-        event_id =itemsOut.read(4)
-        while event_id:
-            event_id=struct.unpack('i',event_id)[0]
-            item_id =struct.unpack('i',itemsOut.read(4))[0]
-            # item_samples[item_id]
-
-            output_item.write(struct.pack('i', event_id))
-            output_item.write(struct.pack('i', item_id))
-
-            while True:
-                sidxTemp=itemsOut.read(4)
-                if sidxTemp :
-                    sidx=struct.unpack('i',sidxTemp)[0]
-                    loss=struct.unpack('f',itemsOut.read(4))[0]
-                    
-                    output_item.write(struct.pack('i', sidx))
-                    output_item.write(struct.pack('f', loss))
-
-                    if sidx==0:
-                        break
-                else:
-                    break
+    if do_item_output:
+        with open(itemsTemp, "rb") as itemsOut:
+            gul_streamtype=struct.unpack('i',itemsOut.read(4))
+            sampleSize=struct.unpack('i',itemsOut.read(4))        
             event_id =itemsOut.read(4)
+            while event_id:
+                event_id=struct.unpack('i',event_id)[0]
+                item_id =struct.unpack('i',itemsOut.read(4))[0]
+                # item_samples[item_id]
 
-    with open(coverageTemp, "rb") as coverageOut:
-        gul_streamtype=struct.unpack('i',coverageOut.read(4))
-        sampleSize=struct.unpack('i',coverageOut.read(4))
-        event_id =coverageOut.read(4)
-        while event_id:
-            event_id =struct.unpack('i',event_id)[0]
-            coverage_id =struct.unpack('i',coverageOut.read(4))[0]
-            # coverage_samples[coverage_id]
+                output_item.write(struct.pack('i', event_id))
+                output_item.write(struct.pack('i', item_id))
 
-            output_coverage.write(struct.pack('i', event_id))
-            output_coverage.write(struct.pack('i', coverage_id))
+                while True:
+                    sidxTemp=itemsOut.read(4)
+                    if sidxTemp :
+                        sidx=struct.unpack('i',sidxTemp)[0]
+                        loss=struct.unpack('f',itemsOut.read(4))[0]
+                        
+                        output_item.write(struct.pack('i', sidx))
+                        output_item.write(struct.pack('f', loss))
 
-            while True:
-                sidxTemp=coverageOut.read(4)
-                if sidxTemp:
-                    sidx =struct.unpack('i', sidxTemp)[0]
-                    loss =struct.unpack('f', coverageOut.read(4))[0]
-
-                    output_coverage.write(struct.pack('i', sidx))
-                    output_coverage.write(struct.pack('f', loss))
-
-                    if sidx==0:
+                        if sidx==0:
+                            break
+                    else:
                         break
-                else:
-                    break
+                event_id =itemsOut.read(4)
+    
+    if do_coverage_output:
+        with open(coverageTemp, "rb") as coverageOut:
+            gul_streamtype=struct.unpack('i',coverageOut.read(4))
+            sampleSize=struct.unpack('i',coverageOut.read(4))
             event_id =coverageOut.read(4)
+            while event_id:
+                event_id =struct.unpack('i',event_id)[0]
+                coverage_id =struct.unpack('i',coverageOut.read(4))[0]
+                # coverage_samples[coverage_id]
+
+                output_coverage.write(struct.pack('i', event_id))
+                output_coverage.write(struct.pack('i', coverage_id))
+
+                while True:
+                    sidxTemp=coverageOut.read(4)
+                    if sidxTemp:
+                        sidx =struct.unpack('i', sidxTemp)[0]
+                        loss =struct.unpack('f', coverageOut.read(4))[0]
+
+                        output_coverage.write(struct.pack('i', sidx))
+                        output_coverage.write(struct.pack('f', loss))
+
+                        if sidx==0:
+                            break
+                    else:
+                        break
+                event_id =coverageOut.read(4)
 
 
 

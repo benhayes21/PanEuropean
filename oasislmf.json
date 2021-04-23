@@ -1,6 +1,6 @@
 {
     "analysis_settings_json": "analysis_settings.json",
-    "ktools_alloc_rule_gul": 0,
+    "ktools_alloc_rule_gul": 1,
     "lookup_data_dir": "keys_data",
     "lookup_module_path": "src/keys_server",
     "model_data_dir": "model_data",

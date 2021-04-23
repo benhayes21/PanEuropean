@@ -3,7 +3,7 @@
     "source_tag": "MDK",
     "model_version_id": "PanEuropeanQuake",
     "module_supplier_id": "ERN",
-    "number_of_samples": 10,
+    "number_of_samples": 100,
     "gul_threshold": 0,
     "gul_output": true,
     "model_settings": {

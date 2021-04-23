@@ -46,10 +46,10 @@ def parse_arguments():
         '-i', '--item-output-stream', required=True, default=None,
         help='Loss output stream'
     )
-    parser.add_argument(
-        '-c', '--coverage_output_stream', required=False, default=None,
-        help='Coverage output stream.',
-    )
+    # parser.add_argument(
+    #     '-c', '--coverage_output_stream', required=False, default=None,
+    #     help='Coverage output stream.',
+    # )
 
     args = parser.parse_args()
 
@@ -632,63 +632,49 @@ def main():
     
     do_coverage_output = False
     output_coverage = None
-    if args.coverage_output_stream is not None:
-       do_coverage_output = True
-       if args.coverage_output_stream == '-':
-           output_coverage = output_stdout
-       else:
-           output_coverage = open(args.coverage_output_stream, "wb")
+    # if args.coverage_output_stream is not None:
+    #    do_coverage_output = True
+    #    if args.coverage_output_stream == '-':
+    #        output_coverage = output_stdout
+    #    else:
+    #        output_coverage = open(args.coverage_output_stream, "wb")
 
 
     rootPath = Path(args.analysis_settings_file).parent
     rutaAME="/usr/local/bin/Case9_LTC_V26.ame" #ame path
     coverageTemp= os.path.join(rootPath,'work',os.path.basename(tempfile.NamedTemporaryFile().name))
-    itemsTemp= os.path.join(rootPath,'work',os.path.basename(tempfile.NamedTemporaryFile().name))
+    itemsTemp= os.path.join(rootPath,'work',os.path.basename(tempfile.NamedTemporaryFile().name + "_i"))
     
     #cmd = "eve %d %d | dotnet \'/usr/local/bin/ERN_Core.dll\' \'%s/\' \'%s\' \'1\' | getmodel | gulcalc -S%s" % (event_batch, max_event_batch, rootPath, rutaAME, number_of_samples)
-    getModelOutbin= os.path.join(rootPath,'work',os.path.basename(tempfile.NamedTemporaryFile().name))
+    getModelOutbin= os.path.join(rootPath,'work',os.path.basename(tempfile.NamedTemporaryFile().name + "_g"))
     cmd = "eve %d %d | dotnet \'/usr/local/bin/ERN_Core.dll\' \'%s/\' \'%s\' \'1\' | getmodelERN > \'%s\'" % (event_batch, max_event_batch, rootPath, rutaAME, getModelOutbin)
 
     subprocess.check_call(cmd, shell=True, cwd=rootPath)
 
-    cmd = "gulcalc -S%s" % (number_of_samples)
+    cmd = "gulcalc -a1 -m1 -S%s" % (number_of_samples)
 
-    if do_coverage_output != '':
-        cmd = '{} -c \'{}\''.format(cmd, coverageTemp)
+    # if do_coverage_output != '':
+    #     cmd = '{} -c \'{}\''.format(cmd, coverageTemp)
     cmd = '{} -r '.format(cmd)
     if do_item_output != '':
         cmd = '{} -i \'{}\''.format(cmd, itemsTemp)
 
     cmd = '{} < \'{}\''.format(cmd, getModelOutbin)
 
+    subprocess.check_call(cmd, shell=True, cwd=rootPath)
+    # cmd = "eve %d %d | dotnet \'/usr/local/bin/ERN_Core.dll\' \'%s/\' \'%s\' \'1\' | getmodelERN | gulcalc -a1 -m1 -S%s -r -i \'%s\'" % (event_batch, max_event_batch, rootPath, rutaAME, number_of_samples, itemsTemp)
+    # subprocess.check_call(cmd, shell=True, cwd=rootPath)
+
      #Write simulated GULs to stdout
     if do_item_output:
-        item_stream_id = (1 << 24) | 1
+        item_stream_id = (2<< 24) | 1
         output_item.write(struct.pack('i', item_stream_id))
         output_item.write(struct.pack('i', number_of_samples))
-    if do_coverage_output:
-        coverage_stream_id = (1 << 24) | 2
-        output_coverage.write(struct.pack('i', coverage_stream_id))
-        output_coverage.write(struct.pack('i', number_of_samples))
-    
-    
+
     gulstream_id= 1 << 24
     streamno_mask = 0x00FFFFFF
-    
-    # # Losses by sample index by item
-    # item_samples = {}
-    # # Coverages by sample index by item
-    # coverage_samples = {}
-
-    # for _, row in items_pd.iterrows():
-    #     item_id = row["item_id"]
-    #     coverage_id = row["coverage_id"]
-    #     if item_id not in item_samples:
-    #         item_samples[item_id] = {}
-    #     if coverage_id not in coverage_samples:
-    #         coverage_samples[coverage_id] = {}
             
-    subprocess.check_call(cmd, shell=True, cwd=rootPath)
+#    subprocess.check_call(cmd, shell=True, cwd=rootPath)
     
     if do_item_output:
         with open(itemsTemp, "rb") as itemsOut:
@@ -718,33 +704,33 @@ def main():
                         break
                 event_id =itemsOut.read(4)
     
-    if do_coverage_output:
-        with open(coverageTemp, "rb") as coverageOut:
-            gul_streamtype=struct.unpack('i',coverageOut.read(4))
-            sampleSize=struct.unpack('i',coverageOut.read(4))
-            event_id =coverageOut.read(4)
-            while event_id:
-                event_id =struct.unpack('i',event_id)[0]
-                coverage_id =struct.unpack('i',coverageOut.read(4))[0]
-                # coverage_samples[coverage_id]
+    # if do_coverage_output:
+    #     with open(coverageTemp, "rb") as coverageOut:
+    #         gul_streamtype=struct.unpack('i',coverageOut.read(4))
+    #         sampleSize=struct.unpack('i',coverageOut.read(4))
+    #         event_id =coverageOut.read(4)
+    #         while event_id:
+    #             event_id =struct.unpack('i',event_id)[0]
+    #             coverage_id =struct.unpack('i',coverageOut.read(4))[0]
+    #             # coverage_samples[coverage_id]
 
-                output_coverage.write(struct.pack('i', event_id))
-                output_coverage.write(struct.pack('i', coverage_id))
+    #             output_coverage.write(struct.pack('i', event_id))
+    #             output_coverage.write(struct.pack('i', coverage_id))
 
-                while True:
-                    sidxTemp=coverageOut.read(4)
-                    if sidxTemp:
-                        sidx =struct.unpack('i', sidxTemp)[0]
-                        loss =struct.unpack('f', coverageOut.read(4))[0]
+    #             while True:
+    #                 sidxTemp=coverageOut.read(4)
+    #                 if sidxTemp:
+    #                     sidx =struct.unpack('i', sidxTemp)[0]
+    #                     loss =struct.unpack('f', coverageOut.read(4))[0]
 
-                        output_coverage.write(struct.pack('i', sidx))
-                        output_coverage.write(struct.pack('f', loss))
+    #                     output_coverage.write(struct.pack('i', sidx))
+    #                     output_coverage.write(struct.pack('f', loss))
 
-                        if sidx==0:
-                            break
-                    else:
-                        break
-                event_id =coverageOut.read(4)
+    #                     if sidx==0:
+    #                         break
+    #                 else:
+    #                     break
+    #             event_id =coverageOut.read(4)
 
 
 

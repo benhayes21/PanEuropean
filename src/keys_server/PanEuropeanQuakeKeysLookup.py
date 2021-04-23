@@ -27,7 +27,8 @@ class PanEuropeanQuakeKeysLookup(OasisBaseKeysLookup):
 
         self._coverage_types = [
             coverages.COVERAGE_TYPES['buildings']['id']
-            #,coverages.COVERAGE_TYPES['contents']['id']
+            ,coverages.COVERAGE_TYPES['contents']['id']
+            ,coverages.COVERAGE_TYPES['bi']['id']
         ]
 
 
@@ -44,7 +45,8 @@ class PanEuropeanQuakeKeysLookup(OasisBaseKeysLookup):
             "longitude": loc['longitude'],
             "occupancycode": loc['occupancycode'],
             "countrycode": loc['countrycode'],
-            "postalcode": loc['postalcode']
+            "postalcode": loc['postalcode'],
+            "coverage_type": coverage_type
         }
 
         

@@ -645,13 +645,12 @@ def main():
     coverageTemp= os.path.join(rootPath,'work',os.path.basename(tempfile.NamedTemporaryFile().name))
     itemsTemp= os.path.join(rootPath,'work',os.path.basename(tempfile.NamedTemporaryFile().name + "_i"))
     
-    #cmd = "eve %d %d | dotnet \'/usr/local/bin/ERN_Core.dll\' \'%s/\' \'%s\' \'1\' | getmodel | gulcalc -S%s" % (event_batch, max_event_batch, rootPath, rutaAME, number_of_samples)
     getModelOutbin= os.path.join(rootPath,'work',os.path.basename(tempfile.NamedTemporaryFile().name + "_g"))
     cmd = "eve %d %d | dotnet \'/usr/local/bin/ERN_Core.dll\' \'%s/\' \'%s\' \'1\' | getmodelERN > \'%s\'" % (event_batch, max_event_batch, rootPath, rutaAME, getModelOutbin)
 
     subprocess.check_call(cmd, shell=True, cwd=rootPath)
 
-    cmd = "gulcalc -a1 -m1 -S%s" % (number_of_samples)
+    cmd = "gulcalc -a0 -S%s" % (number_of_samples)
 
     # if do_coverage_output != '':
     #     cmd = '{} -c \'{}\''.format(cmd, coverageTemp)
@@ -662,7 +661,8 @@ def main():
     cmd = '{} < \'{}\''.format(cmd, getModelOutbin)
 
     subprocess.check_call(cmd, shell=True, cwd=rootPath)
-    # cmd = "eve %d %d | dotnet \'/usr/local/bin/ERN_Core.dll\' \'%s/\' \'%s\' \'1\' | getmodelERN | gulcalc -a1 -m1 -S%s -r -i \'%s\'" % (event_batch, max_event_batch, rootPath, rutaAME, number_of_samples, itemsTemp)
+    
+    # cmd = "eve %d %d | dotnet \'/usr/local/bin/ERN_Core.dll\' \'%s/\' \'%s\' \'1\' | getmodelERN | gulcalc -a0 -S%s -r -i \'%s\'" % (event_batch, max_event_batch, rootPath, rutaAME, number_of_samples, itemsTemp)
     # subprocess.check_call(cmd, shell=True, cwd=rootPath)
 
      #Write simulated GULs to stdout

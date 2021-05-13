@@ -19,7 +19,8 @@ class PanEuropeanQuakeKeysLookup(OasisBaseKeysLookup):
             keys_data_directory=None,
             supplier=None,
             model_name=None,
-            model_version=None):
+            model_version=None,
+            **kwargs):
 
         self._peril_ids = [
             peril.PERILS['earthquake']['id'],

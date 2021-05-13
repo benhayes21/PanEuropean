@@ -1,21 +1,35 @@
-FROM coreoasis/model_worker:1.15.6
+FROM coreoasis/model_worker:1.15.8
 
 #DOTNET SETUP 
 #DEPENDENCIES
- RUN apt-get update \
+RUN apt-get update \
      && apt-get install -y wget \
      && rm -rf /var/lib/apt/lists/*
 
-RUN wget -P /tmp/ https://download.visualstudio.microsoft.com/download/pr/8db2b522-7fa2-4903-97ec-d6d04d297a01/f467006b9098c2de256e40d2e2f36fea/dotnet-sdk-3.1.301-linux-x64.tar.gz
-RUN mkdir /usr/share/dotnet 
-RUN tar -zxf /tmp/dotnet-sdk-3.1.301-linux-x64.tar.gz -C /usr/share/dotnet/
+# RUN wget https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+# RUN dpkg -i packages-microsoft-prod.deb
+
+# RUN apt-get update; \
+#   apt-get install -y apt-transport-https && \
+#   apt-get update && \
+#   apt-get install -y dotnet-sdk-5.0
+
+# RUN wget -P /tmp/ https://download.visualstudio.microsoft.com/download/pr/8db2b522-7fa2-4903-97ec-d6d04d297a01/f467006b9098c2de256e40d2e2f36fea/dotnet-sdk-3.1.301-linux-x64.tar.gz
+RUN wget -P /tmp/ https://download.visualstudio.microsoft.com/download/pr/ef13f9da-46dc-4de9-a05e-5a4c20574189/be95913ebf1fb6c66833ca40060d3f65/dotnet-sdk-5.0.203-linux-x64.tar.gz
+
+
+# RUN mkdir -p $HOME/dotnet 
+RUN mkdir -p /usr/share/dotnet/
+RUN tar -zxf /tmp/dotnet-sdk-5.0.203-linux-x64.tar.gz -C /usr/share/dotnet/
 RUN echo "export PATH=$PATH:/usr/share/dotnet/" >> ~/.bashrc
 RUN echo "export DOTNET_ROOT=/usr/share/dotnet/" >> ~/.bashrc  
 RUN ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet
-RUN dotnet --info
-RUN python3 --version
-RUN pip3 install --upgrade pip==20.0.2
-RUN rm /tmp/dotnet-sdk-3.1.301-linux-x64.tar.gz
+RUN echo "export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1" >> ~/.bashrc 
+#RUN dotnet --version
+#RUN python3 --version
+RUN pip3 install --upgrade pip==21.1.1
+#RUN rm /tmp/dotnet-sdk-3.1.301-linux-x64.tar.gz
+RUN rm /tmp/dotnet-sdk-5.0.203-linux-x64.tar.gz
 
 #ERN FILES
 RUN wget -P /tmp/ https://serv.ern.com.mx/download/oasis/ERN_Files.tar.gz
@@ -30,10 +44,10 @@ RUN pip3 install /tmp/oasislmf-1.15.6-py3-none-manylinux1_x86_64.whl
 RUN rm /tmp/oasislmf-1.15.6-py3-none-manylinux1_x86_64.whl
 
 COPY ./src /home/worker/src
-COPY ./meta-data /home/worker/meta-data
-COPY ./oasislmf_deploy.json /home/worker/oasislmf.json
+COPY ./meta-data /home/worker/model/meta-data
+COPY ./oasislmf_deploy.json /home/worker/model/oasislmf.json
 COPY ./setup.py /home/worker/
 RUN pip3 install -e /home/worker/
 
-RUN sed -i 's/OASISLMF_CONFIG = \/var\/oasis\/oasislmf.json/OASISLMF_CONFIG = \/home\/worker\/oasislmf.json/g' conf.ini
-RUN sed -i 's/MODEL_SETTINGS_FILE = \/var\/oasis\/meta-data\/model_settings.json/MODEL_SETTINGS_FILE = \/home\/worker\/meta-data\/model_settings.json/g' conf.ini
+#RUN sed -i 's/OASISLMF_CONFIG = \/var\/oasis\/oasislmf.json/OASISLMF_CONFIG = \/home\/worker\/oasislmf.json/g' conf.ini
+#RUN sed -i 's/MODEL_SETTINGS_FILE = \/var\/oasis\/meta-data\/model_settings.json/MODEL_SETTINGS_FILE = \/home\/worker\/meta-data\/model_settings.json/g' conf.ini

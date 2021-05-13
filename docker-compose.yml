@@ -32,7 +32,7 @@ services:
      - ${OASIS_MEDIA_ROOT:-/tmp/docker-shared-fs}:/shared-fs:rw
   worker-monitor:
    image: coreoasis/api_server:1.15.6
-   command: [wait-for-server, 'server:8000', celery, worker, -A, src.server.oasisapi, --loglevel=INFO]
+   command: [wait-for-server, 'server:8000', celery, -A, src.server.oasisapi, worker, --loglevel=INFO]
    links:
      - server-db
      - celery-db
@@ -57,7 +57,7 @@ services:
    volumes:
      - ${OASIS_MEDIA_ROOT:-/tmp/docker-shared-fs}:/shared-fs:rw
   worker:
-    image: ern_worker_image
+    image: ern_worker_image:1.15.8
     links:
      - celery-db
      - rabbit:myrabbit
@@ -77,7 +77,8 @@ services:
      - OASIS_CELERY_DB_PORT=3306
      - OASIS_OASISLMF_CONFIG=/home/worker/oasislmf.json
      - OASIS_KEEP_RUN_DIR=True
-     - KTOOLS_LEGACY_GUL_STREAM=True
+     - KTOOLS_LEGACY_GUL_STREAM=False
+     - DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
     volumes:
      #- ./:/var/oasis/:rw
      - ${OASIS_MEDIA_ROOT:-/tmp/docker-shared-fs}:/shared-fs:rw
